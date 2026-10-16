@@ -186,6 +186,20 @@ class Loader {
 	}
 
 	/**
+	 * Define constant if not already set.
+	 *
+	 * @param string      $name  Constant name.
+	 * @param bool|string $value Constant value.
+	 *
+	 * @return void
+	 */
+	protected function define( $name, $value ): void {
+		if ( ! defined( $name ) ) {
+			define( $name, $value );
+		}
+	}
+
+	/**
 	 * Create container if needed.
 	 *
 	 * @param string $data   Class data.
