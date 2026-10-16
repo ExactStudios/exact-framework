@@ -9,8 +9,6 @@
 
 namespace ExactStudios\Framework\Utilities;
 
-use DateTimeZone;
-
 defined( 'ABSPATH' ) || exit;
 
 /**
@@ -59,13 +57,13 @@ class WordPress {
 	 * @return bool|string
 	 */
 	public static function get_action() {
-		$action = Params::request( 'action' );
-		if ( '-1' !== $action ) {
-			return sanitize_key( $action );
-		}
+		foreach ( [ 'action', 'action2' ] as $key ) {
+			$action = Params::request( $key );
 
-		$action = Params::request( 'action2' );
-		if ( '-1' !== $action ) {
+			if ( false === $action || '' === $action || '-1' === $action ) {
+				continue;
+			}
+
 			return sanitize_key( $action );
 		}
 

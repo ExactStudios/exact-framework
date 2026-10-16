@@ -8,6 +8,7 @@
 require __DIR__ . '/bootstrap.php';
 require __DIR__ . '/updates-fixture.php';
 require __DIR__ . '/assets-fixture.php';
+require __DIR__ . '/install-fixture.php';
 
 use ExactStudios\Framework\Utilities\Params;
 
@@ -174,5 +175,7 @@ require __DIR__ . '/later.php';
 $order = 'EXACT_TEST_REQUEST_ORDER=1 ' . PHP_BINARY . ' -d request_order=ES ' . escapeshellarg( __FILE__ );
 passthru( $order, $order_status );
 expect_same( 0, $order_status, 'request() ignores request_order letters other than G, P, and C' );
+
+require __DIR__ . '/batch-11.php';
 
 exit( $failures > 0 ? 1 : 0 );

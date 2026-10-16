@@ -57,11 +57,13 @@ class Loader {
 		}
 
 		// phpcs:disable
-		$trace = debug_backtrace();
+		// The __get frame already records the caller's file and line. The next frame is whoever included that file.
+		$trace  = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS, 2 );
+		$caller = $trace[0];
 		\trigger_error(
 			'Undefined property via __get(): ' . $name .
-			' in ' . $trace[0]['file'] .
-			' on line ' . $trace[0]['line'],
+			' in ' . $caller['file'] .
+			' on line ' . $caller['line'],
 			E_USER_NOTICE
 		);
 		// phpcs:enable
@@ -197,32 +199,16 @@ class Loader {
 		$arguments  = is_string( $data ) ? [] : $data[1];
 
 		if ( ! \class_exists( $class_name, true ) ) {
+			\_doing_it_wrong( __METHOD__, 'Class not found: ' . esc_html( $class_name ), '1.0.0' );
 			return;
 		}
 
 		$container = empty( $arguments ) ? new $class_name() : new $class_name( ...$arguments );
-		if ( null === $container ) {
-			return;
-		}
 
 		$container->$method();
 
 		if ( is_string( $alias ) ) {
 			$this->containers[ $alias ] = $container;
-		}
-	}
-
-	/**
-	 * Define constant if not already set.
-	 *
-	 * @param string      $name  Constant name.
-	 * @param bool|string $value Constant value.
-	 *
-	 * @return void
-	 */
-	protected function define( string $name, $value ): void {
-		if ( ! defined( $name ) ) {
-			define( $name, $value );
 		}
 	}
 }

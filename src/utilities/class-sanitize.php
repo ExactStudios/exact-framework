@@ -40,7 +40,7 @@ class Sanitize {
 	 */
 	public static function float_to_string( $floatval ): string {
 		if ( ! is_float( $floatval ) ) {
-			return $floatval;
+			return is_scalar( $floatval ) ? (string) $floatval : '';
 		}
 
 		$locale = localeconv();
@@ -58,8 +58,13 @@ class Sanitize {
 	 * @return bool
 	 */
 	public static function string_to_bool( $str ): bool {
-		$str = $str ?? '';
-		return is_bool( $str ) ? $str : ( 'yes' === strtolower( $str ) || 1 === $str || 'true' === strtolower( $str ) || '1' === $str || 'on' === strtolower( $str ) );
+		if ( is_bool( $str ) ) {
+			return $str;
+		}
+
+		$str = strtolower( (string) ( $str ?? '' ) );
+
+		return in_array( $str, [ 'yes', 'true', '1', 'on' ], true );
 	}
 
 	/**

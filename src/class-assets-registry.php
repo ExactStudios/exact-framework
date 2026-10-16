@@ -178,22 +178,52 @@ abstract class Assets_Registry implements Integration_Interface {
 	 * @return array{dependencies: array, version: string|null}
 	 */
 	protected function load_asset_metadata( string $relative_path ): array {
-		$asset_path = preg_replace( '/\.js$/', '.asset.php', $relative_path );
-		$full_path  = wp_normalize_path( $this->get_base_path() . $asset_path );
-
-		if ( file_exists( $full_path ) ) {
-			$asset = include $full_path;
-
-			return [
-				'dependencies' => $asset['dependencies'] ?? [],
-				'version'      => $asset['version'] ?? null,
-			];
-		}
-
-		return [
+		$empty      = [
 			'dependencies' => [],
 			'version'      => null,
 		];
+		$asset_path = preg_replace( '/\.js$/', '.asset.php', $relative_path );
+		$full_path  = $this->contained_file( (string) $asset_path );
+
+		if ( '' === $full_path ) {
+			return $empty;
+		}
+
+		$asset = include $full_path;
+
+		if ( ! is_array( $asset ) ) {
+			return $empty;
+		}
+
+		return [
+			'dependencies' => $asset['dependencies'] ?? [],
+			'version'      => $asset['version'] ?? null,
+		];
+	}
+
+	/**
+	 * Resolve an asset file and reject paths outside the plugin directory.
+	 *
+	 * @param string $relative Path relative to the asset base.
+	 *
+	 * @return string Absolute path, or an empty string when the file is missing or outside the base.
+	 */
+	private function contained_file( string $relative ): string {
+		$base = realpath( $this->get_base_path() );
+		$file = realpath( $this->get_base_path() . $relative );
+
+		if ( false === $base || false === $file || ! is_file( $file ) ) {
+			return '';
+		}
+
+		$base = wp_normalize_path( trailingslashit( $base ) );
+		$file = wp_normalize_path( $file );
+
+		if ( 0 !== strpos( $file, $base ) ) {
+			return '';
+		}
+
+		return $file;
 	}
 
 	/**

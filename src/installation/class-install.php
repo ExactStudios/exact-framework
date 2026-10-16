@@ -28,17 +28,30 @@ abstract class Install implements Initializer_Interface {
 	abstract protected function get_base_file(): string;
 
 	/**
+	 * Register lifecycle hooks as soon as the plugin constructs this object.
+	 */
+	public function __construct() {
+		$file = $this->get_base_file();
+		if ( '' === $file ) {
+			return;
+		}
+
+		register_activation_hook( $file, [ $this, 'activation' ] );
+		register_deactivation_hook( $file, [ $this, 'deactivation' ] );
+		register_uninstall_hook( $file, [ static::class, 'uninstall' ] );
+	}
+
+	/**
 	 * Runs this initializer.
 	 *
 	 * @return void
 	 */
 	public function initialize(): void {
-		if ( null !== $this->get_base_file() ) {
-			register_activation_hook( $this->get_base_file(), [ $this, 'activation' ] );
-			register_deactivation_hook( $this->get_base_file(), [ $this, 'deactivation' ] );
-
-			add_action( 'wp_initialize_site', [ $this, 'initialize_site' ] );
+		if ( '' === $this->get_base_file() ) {
+			return;
 		}
+
+		add_action( 'wp_initialize_site', [ $this, 'initialize_site' ] );
 	}
 
 	/**
@@ -49,8 +62,6 @@ abstract class Install implements Initializer_Interface {
 	 * @return void
 	 */
 	public function activation( bool $network_wide = false ): void {
-		register_uninstall_hook( $this->get_base_file(), [ static::class, 'uninstall' ] );
-
 		if ( ! is_multisite() || ! $network_wide ) {
 			$this->activate();
 			return;
@@ -83,6 +94,10 @@ abstract class Install implements Initializer_Interface {
 	 * @return void
 	 */
 	public function initialize_site( $site ): void {
+		if ( ! is_plugin_active_for_network( plugin_basename( $this->get_base_file() ) ) ) {
+			return;
+		}
+
 		switch_to_blog( $site->blog_id );
 		$this->activate();
 		restore_current_blog();

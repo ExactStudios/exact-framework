@@ -208,6 +208,119 @@ function wp_doing_ajax() {
 	return ! empty( $GLOBALS['exact_test_doing_ajax'] );
 }
 
+/**
+ * Key sanitizer.
+ *
+ * @param mixed $key Key.
+ * @return string
+ */
+function sanitize_key( $key ) {
+	$key = strtolower( (string) $key );
+	return preg_replace( '/[^a-z0-9_\-]/', '', $key );
+}
+
+/**
+ * Record an action callback.
+ *
+ * @param string $hook     Hook.
+ * @param mixed  $callback Callback.
+ * @return void
+ */
+function add_action( $hook, $callback ) {
+	$GLOBALS['exact_actions'][ $hook ][] = $callback;
+}
+
+/**
+ * Record an activation hook.
+ *
+ * @param string $file     Plugin file.
+ * @param mixed  $callback Callback.
+ * @return void
+ */
+function register_activation_hook( $file, $callback ) {
+	$GLOBALS['exact_hooks']['activation'][] = [ $file, $callback ];
+}
+
+/**
+ * Record a deactivation hook.
+ *
+ * @param string $file     Plugin file.
+ * @param mixed  $callback Callback.
+ * @return void
+ */
+function register_deactivation_hook( $file, $callback ) {
+	$GLOBALS['exact_hooks']['deactivation'][] = [ $file, $callback ];
+}
+
+/**
+ * Record an uninstall hook.
+ *
+ * @param string $file     Plugin file.
+ * @param mixed  $callback Callback.
+ * @return void
+ */
+function register_uninstall_hook( $file, $callback ) {
+	$GLOBALS['exact_hooks']['uninstall'][] = [ $file, $callback ];
+}
+
+/**
+ * Plugin basename.
+ *
+ * @param string $file File.
+ * @return string
+ */
+function plugin_basename( $file ) {
+	return basename( (string) $file );
+}
+
+/**
+ * Network-active check.
+ *
+ * @param string $plugin Plugin basename.
+ * @return bool
+ */
+function is_plugin_active_for_network( $plugin ) {
+	return ! empty( $GLOBALS['exact_network_plugins'][ $plugin ] );
+}
+
+/**
+ * Record a blog switch.
+ *
+ * @param int $blog_id Blog id.
+ * @return void
+ */
+function switch_to_blog( $blog_id ) {
+	$GLOBALS['exact_switched'][] = $blog_id;
+}
+
+/**
+ * Record restoring the current blog.
+ *
+ * @return void
+ */
+function restore_current_blog() {
+	$GLOBALS['exact_restored'] = true;
+}
+
+/**
+ * Record a doing-it-wrong notice.
+ *
+ * @param string $function Function.
+ * @param string $message  Message.
+ * @param string $version  Version.
+ * @return void
+ */
+function _doing_it_wrong( $function, $message, $version ) {
+	$GLOBALS['exact_wrong'][] = [ $function, $message, $version ];
+}
+
+$GLOBALS['exact_actions']         = [];
+$GLOBALS['exact_hooks']           = [];
+$GLOBALS['exact_network_plugins'] = [];
+$GLOBALS['exact_switched']        = [];
+$GLOBALS['exact_restored']        = false;
+$GLOBALS['exact_wrong']           = [];
+
 $GLOBALS['exact_wp_calls']        = [];
 $GLOBALS['exact_test_doing_ajax'] = false;
 
@@ -221,3 +334,7 @@ require dirname( __DIR__ ) . '/src/class-json.php';
 require dirname( __DIR__ ) . '/src/utilities/class-params.php';
 require dirname( __DIR__ ) . '/src/utilities/class-conditional.php';
 require dirname( __DIR__ ) . '/src/utilities/class-html.php';
+require dirname( __DIR__ ) . '/src/utilities/class-wordpress.php';
+require dirname( __DIR__ ) . '/src/interfaces/interface-initializer.php';
+require dirname( __DIR__ ) . '/src/installation/class-install.php';
+require dirname( __DIR__ ) . '/src/class-loader.php';

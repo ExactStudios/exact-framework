@@ -149,9 +149,9 @@ abstract class Updates {
 
 			foreach ( $updates as $version => $path ) {
 				if ( version_compare( $installed_version, (string) $version, '<' ) ) {
-					$file_path = $this->get_folder() . $path;
-					if ( ! file_exists( $file_path ) ) {
-						error_log( "Update file {$file_path} not found." ); // phpcs:ignore
+					$file_path = $this->contained_file( (string) $path );
+					if ( '' === $file_path ) {
+						error_log( 'Update file ' . $this->get_folder() . $path . ' not found.' ); // phpcs:ignore
 						return;
 					}
 
@@ -183,6 +183,33 @@ abstract class Updates {
 		}
 
 		return defined( 'WP_CLI' ) && WP_CLI;
+	}
+
+	/**
+	 * Resolve an update file and reject paths outside the updates folder.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param string $relative Path relative to the updates folder.
+	 *
+	 * @return string Absolute path, or an empty string when the file is missing or outside the folder.
+	 */
+	private function contained_file( string $relative ): string {
+		$base = realpath( $this->get_folder() );
+		$file = realpath( $this->get_folder() . $relative );
+
+		if ( false === $base || false === $file || ! is_file( $file ) ) {
+			return '';
+		}
+
+		$base = wp_normalize_path( trailingslashit( $base ) );
+		$file = wp_normalize_path( $file );
+
+		if ( 0 !== strpos( $file, $base ) ) {
+			return '';
+		}
+
+		return $file;
 	}
 
 	/**
