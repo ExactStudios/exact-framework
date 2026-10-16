@@ -2,7 +2,6 @@
 	"name": "exactstudios/framework",
 	"description": "Exact Studios framework",
 	"homepage": "https://github.com/ExactStudios/exact-framework",
-	"version": "1.0.0",
 	"type": "wordpress-plugin",
 	"license": "GPL-3.0-or-later",
 	"prefer-stable": true,

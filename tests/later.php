@@ -128,3 +128,4 @@ $attrs = HTML::build_attributes(
 	]
 );
 expect_same( 'checked data-label="a&lt;b&gt;&amp;&quot;" id', $attrs, 'false attributes are omitted and true is valueless' );
+expect_same( 'btn active', HTML::classnames( 'btn', [ 'active' => true, 'hidden' => false ] ), 'classnames keeps truthy names' );

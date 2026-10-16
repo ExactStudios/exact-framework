@@ -146,8 +146,7 @@ class JSON {
 	 * @return self
 	 */
 	public function clear_all(): self {
-		$this->data                               = [];
-		$this->data[ $this->default_object_name ] = [];
+		$this->data = [];
 
 		return $this;
 	}
