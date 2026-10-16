@@ -32,16 +32,18 @@ class HTML {
 
 		$out = [];
 		foreach ( $attributes as $name => $value ) {
-			if ( true === $value || false === $value ) {
-				$value = $value ? 'true' : 'false';
-			}
-
-			if ( null === $value ) {
-				$out[] = esc_html( $prefix . $name );
+			if ( false === $value ) {
 				continue;
 			}
 
-			$out[] = esc_attr( $prefix . $name ) . '="' . esc_attr( $value ) . '"';
+			$name = esc_attr( $prefix . $name );
+
+			if ( true === $value || null === $value ) {
+				$out[] = $name;
+				continue;
+			}
+
+			$out[] = $name . '="' . esc_attr( $value ) . '"';
 		}
 
 		return implode( ' ', $out );

@@ -165,11 +165,7 @@ class JSON {
 			return;
 		}
 
-		echo "<script type='text/javascript'>\n";
-		echo "/* <![CDATA[ */\n";
-		echo "$script\n"; // phpcs:ignore
-		echo "/* ]]> */\n";
-		echo "</script>\n";
+		wp_print_inline_script_tag( $script );
 	}
 
 	/**
@@ -199,16 +195,8 @@ class JSON {
 	 * @return string
 	 */
 	private function single_object( string $object_name, array $object_data ): string {
-		if ( empty( $object_data ) ) {
+		if ( empty( $object_data ) || ! preg_match( '/^[A-Za-z_$][A-Za-z0-9_$]*$/', $object_name ) ) {
 			return '';
-		}
-
-		foreach ( $object_data as $key => $value ) {
-			if ( ! is_scalar( $value ) ) {
-				continue;
-			}
-
-			$object_data[ $key ] = html_entity_decode( (string) $value, ENT_QUOTES, 'UTF-8' );
 		}
 
 		return "var $object_name = " . wp_json_encode( $object_data ) . ';' . PHP_EOL;

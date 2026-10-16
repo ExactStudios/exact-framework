@@ -7,6 +7,19 @@
 
 require __DIR__ . '/bootstrap.php';
 require __DIR__ . '/updates-fixture.php';
+require __DIR__ . '/assets-fixture.php';
+
+use ExactStudios\Framework\Utilities\Params;
+
+if ( '1' === getenv( 'EXACT_TEST_REQUEST_ORDER' ) ) {
+	set_error_handler(
+		static function () {
+			exit( 1 );
+		}
+	);
+	$value = Params::request( 'not_sent' );
+	exit( false === $value ? 0 : 1 );
+}
 
 use ExactStudios\Framework\Utilities\Sanitize;
 use ExactStudios\Updates\Fixture_Updates;
@@ -155,5 +168,11 @@ expect_same( "hello there\nworld", $clean, 'textarea clean keeps line breaks and
 $cli = 'EXACT_TEST_WP_CLI=1 ' . PHP_BINARY . ' ' . escapeshellarg( __FILE__ );
 passthru( $cli, $cli_status );
 expect_same( 0, $cli_status, 'WP-CLI runs updates without update_plugins' );
+
+require __DIR__ . '/later.php';
+
+$order = 'EXACT_TEST_REQUEST_ORDER=1 ' . PHP_BINARY . ' -d request_order=ES ' . escapeshellarg( __FILE__ );
+passthru( $order, $order_status );
+expect_same( 0, $order_status, 'request() ignores request_order letters other than G, P, and C' );
 
 exit( $failures > 0 ? 1 : 0 );

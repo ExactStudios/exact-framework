@@ -45,6 +45,13 @@ abstract class Assets_Registry implements Integration_Interface {
 	abstract public function get_base_url(): string;
 
 	/**
+	 * Base filesystem path for plugin local assets.
+	 *
+	 * @return string
+	 */
+	abstract public function get_base_path(): string;
+
+	/**
 	 * Prefix to use in handle to make it unique.
 	 *
 	 * @return string
@@ -195,11 +202,15 @@ abstract class Assets_Registry implements Integration_Interface {
 	 * If the provided URL is an absolute URL or protocol-relative URL, it is returned as is.
 	 * Otherwise, the base URL is prepended to the relative path.
 	 *
-	 * @param string $src The source URL.
+	 * @param string|false $src The source URL.
 	 *
 	 * @return string The resolved URL.
 	 */
 	private function resolve_url( $src ): string {
+		if ( false === $src || '' === $src ) {
+			return '';
+		}
+
 		if ( preg_match( '/^(https?:)?\/\//', $src ) ) {
 			return $src;
 		}

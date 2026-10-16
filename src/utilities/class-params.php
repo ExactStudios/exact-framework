@@ -93,7 +93,7 @@ class Params {
 	 * @return mixed
 	 */
 	public static function server( $id, $default = false, $filter = FILTER_DEFAULT, $flag = [] ) {
-		return self::input( INPUT_SERVER, $id, $default, $filter, $flag );
+		return self::read_superglobal( $_SERVER, $id, $default, $filter, $flag );
 	}
 
 	/**
@@ -121,7 +121,7 @@ class Params {
 	 * @return mixed
 	 */
 	public static function env( $id, $default = false, $filter = FILTER_DEFAULT, $flag = [] ) {
-		return self::input( INPUT_ENV, $id, $default, $filter, $flag );
+		return self::read_superglobal( $_ENV, $id, $default, $filter, $flag );
 	}
 
 	/**
@@ -146,13 +146,44 @@ class Params {
 		$request_order = str_split( $request_order );
 		$request_order = array_reverse( $request_order );
 
-		foreach ( $request_order as $r ) {
-			if ( filter_has_var( $request_filters[ $r ], $id ) ) {
-				// Return early if found.
-				return filter_input( $request_filters[ $r ], $id, $filter, $flag );
+		foreach ( $request_order as $letter ) {
+			if ( ! isset( $request_filters[ $letter ] ) ) {
+				continue;
+			}
+
+			if ( filter_has_var( $request_filters[ $letter ], $id ) ) {
+				return filter_input( $request_filters[ $letter ], $id, $filter, $flag );
 			}
 		}
 
 		return $default;
+	}
+
+	/**
+	 * Read one superglobal value and sanitize it.
+	 *
+	 * @param array  $source  Superglobal.
+	 * @param string $id      Field id.
+	 * @param mixed  $default Default when missing.
+	 * @param int    $filter  Filter id.
+	 * @param mixed  $flag    Filter flag.
+	 *
+	 * @return mixed
+	 */
+	private static function read_superglobal( array $source, $id, $default, $filter, $flag ) {
+		if ( ! array_key_exists( $id, $source ) ) {
+			return $default;
+		}
+
+		$value = $source[ $id ];
+		if ( ! is_scalar( $value ) ) {
+			return $default;
+		}
+
+		if ( FILTER_DEFAULT === $filter ) {
+			return sanitize_text_field( (string) $value );
+		}
+
+		return filter_var( $value, $filter, $flag ? $flag : 0 );
 	}
 }

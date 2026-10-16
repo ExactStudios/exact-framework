@@ -235,26 +235,22 @@ class Arr {
 			return $arr;
 		}
 
-		$keys = explode( '.', $key );
+		$cursor = &$arr;
+		$keys   = explode( '.', (string) $key );
+		$last   = array_pop( $keys );
 
-		foreach ( $keys as $i => $key ) {
-			if ( 1 === count( $keys ) ) {
-				break;
-			}
-
-			unset( $keys[ $i ] );
-
+		foreach ( $keys as $segment ) {
 			// If the key doesn't exist at this depth, we will just create an empty array
 			// to hold the next value, allowing us to create the arrays to hold final
 			// values at the correct depth. Then we'll keep digging into the array.
-			if ( ! isset( $arr[ $key ] ) || ! is_array( $arr[ $key ] ) ) {
-				$arr[ $key ] = [];
+			if ( ! isset( $cursor[ $segment ] ) || ! is_array( $cursor[ $segment ] ) ) {
+				$cursor[ $segment ] = [];
 			}
 
-			$arr = &$arr[ $key ];
+			$cursor = &$cursor[ $segment ];
 		}
 
-		$arr[ array_shift( $keys ) ] = $value;
+		$cursor[ $last ] = $value;
 
 		return $arr;
 	}
