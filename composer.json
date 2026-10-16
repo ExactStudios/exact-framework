@@ -1,0 +1,49 @@
+{
+	"name": "exactstudios/framework",
+	"description": "Exact Studios framework",
+	"homepage": "https://github.com/ExactStudios/exact-framework",
+	"version": "1.0.0",
+	"type": "wordpress-plugin",
+	"license": "GPL-3.0-or-later",
+	"prefer-stable": true,
+	"minimum-stability": "dev",
+	"authors": [
+		{
+			"name": "Exact Studios",
+			"email": "info@exactwp.com",
+			"homepage": "https://github.com/ExactStudios"
+		}
+	],
+	"support": {
+		"issues": "https://github.com/ExactStudios/exact-framework/issues",
+		"source": "https://github.com/ExactStudios/exact-framework"
+	},
+	"require": {
+		"php": ">=7.4"
+	},
+	"require-dev": {
+		"phpcompatibility/phpcompatibility-wp": "*",
+		"wp-coding-standards/wpcs": "^3.0.0"
+	},
+	"config": {
+		"optimize-autoloader": true,
+		"sort-packages": true,
+		"platform": {
+			"php": "7.4"
+		},
+		"allow-plugins": {
+			"dealerdirect/phpcodesniffer-composer-installer": true
+		}
+	},
+	"autoload": {
+		"classmap": [
+			"src/"
+		],
+		"files": []
+	},
+	"scripts": {
+		"post-install-cmd": [
+			"composer global require wp-cli/wp-cli"
+		]
+	}
+}
