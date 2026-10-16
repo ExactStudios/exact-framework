@@ -5,11 +5,11 @@
  * It handles JSON output for use on the backend and frontend.
  *
  * @since   1.0.0
- * @package ExactStudios\JSON
+ * @package ExactStudios\Framework
  * @author  Exact Studios <info@exactwp.com>
  */
 
-namespace ExactStudios\JSON;
+namespace ExactStudios\Framework;
 
 use InvalidArgumentException;
 

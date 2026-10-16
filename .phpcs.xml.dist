@@ -23,7 +23,7 @@
 
 	<!-- Rules: Check PHP version compatibility -->
 	<!-- https://github.com/PHPCompatibility/PHPCompatibility#sniffing-your-code-for-compatibility-with-specific-php-versions -->
-	<config name="testVersion" value="7.4-"/>
+	<config name="testVersion" value="8.0-"/>
 	<rule ref="PHPCompatibility">
 		<include-pattern>*\.php$</include-pattern>
 		<exclude-pattern>tests/</exclude-pattern>
@@ -37,12 +37,6 @@
 	<!-- https://github.com/PHPCompatibility/PHPCompatibilityWP -->
 	<rule ref="PHPCompatibilityWP"/>
     <rule ref="WordPress"/>
-
-	<rule ref="WordPress.WP.I18n">
-		<properties>
-			<property name="text_domain" type="array" value="exact-social" />
-		</properties>
-	</rule>
 
 	<rule ref="WordPress.DB.DirectDatabaseQuery">
 		<exclude name="WordPress.DB.DirectDatabaseQuery.NoCaching" />
@@ -72,38 +66,6 @@
 	<!-- Disable disallow short arrays and enforce them: -->
 	<rule ref="WordPress-Extra">
 		<exclude name="Universal.Arrays.DisallowShortArraySyntax"/>
-	</rule>
-
-	<!-- Make sure custom capabilities are recognized. -->
-	<rule ref="WordPress.WP.Capabilities">
-		<properties>
-			<property name="custom_capabilities" type="array">
-				<element value="exs_create_workspaces"/>
-				<element value="exs_delete_workspace"/>
-				<element value="exs_transfer_workspace"/>
-				<element value="exs_archive_workspace"/>
-				<element value="exs_edit_settings"/>
-				<element value="exs_view_settings"/>
-				<element value="exs_manage_team"/>
-				<element value="exs_manage_accounts"/>
-				<element value="exs_manage_integrations"/>
-				<element value="exs_manage_license"/>
-				<element value="exs_view_posts"/>
-				<element value="exs_edit_posts"/>
-				<element value="exs_edit_others_posts"/>
-				<element value="exs_delete_posts"/>
-				<element value="exs_delete_others_posts"/>
-				<element value="exs_publish_posts"/>
-				<element value="exs_approve_posts"/>
-				<element value="exs_comment_posts"/>
-				<element value="exs_manage_queues"/>
-				<element value="exs_manage_library"/>
-				<element value="exs_use_library"/>
-				<element value="exs_reply_inbox"/>
-				<element value="exs_view_analytics"/>
-				<element value="exs_export_reports"/>
-			</property>
-		</properties>
 	</rule>
 
 	<rule ref="Generic.Arrays.DisallowLongArraySyntax"/>

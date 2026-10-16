@@ -5,7 +5,7 @@
  * @package ExactStudios\Framework
  */
 
-namespace ExactStudios\Updates;
+namespace ExactStudios\Framework;
 
 /**
  * Test double.

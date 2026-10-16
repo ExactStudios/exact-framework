@@ -23,7 +23,7 @@ if ( '1' === getenv( 'EXACT_TEST_REQUEST_ORDER' ) ) {
 }
 
 use ExactStudios\Framework\Utilities\Sanitize;
-use ExactStudios\Updates\Fixture_Updates;
+use ExactStudios\Framework\Fixture_Updates;
 
 $failures = 0;
 

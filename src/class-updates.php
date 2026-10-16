@@ -3,11 +3,11 @@
  * Update manger class
  *
  * @since   1.0.0
- * @package ExactStudios\Updates
+ * @package ExactStudios\Framework
  * @author  Exact Studios <info@exactwp.com>
  */
 
-namespace ExactStudios\Updates;
+namespace ExactStudios\Framework;
 
 use InvalidArgumentException;
 

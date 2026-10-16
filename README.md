@@ -7,7 +7,7 @@
 [![License](https://poser.pugx.org/exactstudios/framework/license)](https://packagist.org/packages/exactstudios/framework)
 
 <p align="center">
-	<img src="https://img.icons8.com/nolan/256/minecraft-logo.png"/>
+	<strong>exactstudios/framework</strong>
 </p>
 
 ## 📃 About

@@ -277,7 +277,7 @@ abstract class Assets_Registry implements Integration_Interface {
 	 */
 	private function prefix_dep( $dep ): string {
 		if ( Str::starts_with( '_pre_', $dep ) ) {
-			$dep = str_replace( '_pre_', '', $dep );
+			$dep = substr( $dep, strlen( '_pre_' ) );
 			$dep = $this->prefix_it( $dep );
 		}
 

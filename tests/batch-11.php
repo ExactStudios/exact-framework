@@ -10,7 +10,7 @@ use ExactStudios\Framework\Installation\Fixture_Install;
 use ExactStudios\Framework\Loader;
 use ExactStudios\Framework\Utilities\Sanitize;
 use ExactStudios\Framework\Utilities\WordPress;
-use ExactStudios\Updates\Fixture_Updates;
+use ExactStudios\Framework\Fixture_Updates;
 
 $root = sys_get_temp_dir() . '/exact-confine-' . uniqid( '', true );
 mkdir( $root );

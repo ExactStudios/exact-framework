@@ -11,7 +11,7 @@ use ExactStudios\Framework\Utilities\Arr;
 use ExactStudios\Framework\Utilities\Conditional;
 use ExactStudios\Framework\Utilities\HTML;
 use ExactStudios\Framework\Utilities\Params;
-use ExactStudios\JSON\JSON;
+use ExactStudios\Framework\JSON;
 
 try {
 	$method = new ReflectionMethod( Assets_Registry::class, 'get_base_path' );
@@ -55,6 +55,14 @@ try {
 } catch ( Throwable $e ) {
 	expect_same( 'no throw', get_class( $e ) . ': ' . $e->getMessage(), 'missing src does not throw' );
 }
+
+$GLOBALS['exact_wp_calls'] = [];
+$assets->register_script( 'editor', 'app.js', [ '_pre_foo_pre_bar', 'jquery' ], '1' );
+expect_same(
+	[ 'ex-foo_pre_bar', 'jquery' ],
+	$GLOBALS['exact_wp_calls'][0][1][2],
+	'only a leading _pre_ dependency marker is prefixed'
+);
 
 $dotted = [ 'keep' => 1 ];
 expect_same(
