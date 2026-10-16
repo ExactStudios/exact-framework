@@ -13,6 +13,8 @@ namespace ExactStudios\Framework;
 
 use InvalidArgumentException;
 
+defined( 'ABSPATH' ) || exit;
+
 /**
  * JSON class
  */

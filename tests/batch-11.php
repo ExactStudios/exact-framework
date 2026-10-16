@@ -89,6 +89,12 @@ $install->initialize_site( (object) [ 'blog_id' => 4 ] );
 expect_same( [ 'activate' ], $install->calls, 'a new site is activated for a network-active plugin' );
 expect_same( [ 4 ], $GLOBALS['exact_switched'], 'network site activation switches to the new blog' );
 
+global $wpdb;
+$wpdb = (object) [ 'siteid' => 7 ];
+WordPress::get_sites();
+expect_same( 0, $GLOBALS['exact_get_sites_args']['number'] ?? null, 'network site lookup requests every site' );
+expect_same( 7, $GLOBALS['exact_get_sites_args']['network_id'] ?? null, 'network site lookup uses the current network' );
+
 $loader = new Loader();
 set_error_handler(
 	static function ( $errno, $errstr ) {

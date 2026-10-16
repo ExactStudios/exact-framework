@@ -5,6 +5,17 @@
  * @package ExactStudios\Framework
  */
 
+if ( '1' === getenv( 'EXACT_TEST_SITE_PLUGIN' ) ) {
+	require __DIR__ . '/site-plugin-child.php';
+	exit( empty( $GLOBALS['exact_plugin_php'] ) ? 1 : 0 );
+}
+
+if ( '1' === getenv( 'EXACT_TEST_JSON_GUARD' ) ) {
+	require dirname( __DIR__ ) . '/src/class-json.php';
+	echo 'LOADED';
+	exit( 0 );
+}
+
 require __DIR__ . '/bootstrap.php';
 require __DIR__ . '/updates-fixture.php';
 require __DIR__ . '/assets-fixture.php';
@@ -177,5 +188,13 @@ passthru( $order, $order_status );
 expect_same( 0, $order_status, 'request() ignores request_order letters other than G, P, and C' );
 
 require __DIR__ . '/batch-11.php';
+
+$site_plugin = 'EXACT_TEST_SITE_PLUGIN=1 ' . PHP_BINARY . ' ' . escapeshellarg( __FILE__ );
+passthru( $site_plugin, $site_plugin_status );
+expect_same( 0, $site_plugin_status, 'a new site loads plugin.php before the network-active check' );
+
+$json_guard = 'EXACT_TEST_JSON_GUARD=1 ' . PHP_BINARY . ' ' . escapeshellarg( __FILE__ );
+$json_output = shell_exec( $json_guard );
+expect_same( false, false !== strpos( (string) $json_output, 'LOADED' ), 'JSON refuses a direct request' );
 
 exit( $failures > 0 ? 1 : 0 );

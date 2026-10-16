@@ -284,6 +284,18 @@ function is_plugin_active_for_network( $plugin ) {
 }
 
 /**
+ * Record the arguments used to list network sites.
+ *
+ * @param array $args Query arguments.
+ * @return array<int, int>
+ */
+function get_sites( $args = [] ) {
+	$GLOBALS['exact_get_sites_args'] = $args;
+
+	return [ 1, 2 ];
+}
+
+/**
  * Record a blog switch.
  *
  * @param int $blog_id Blog id.

@@ -30,6 +30,7 @@ class WordPress {
 				'deleted'    => 0,
 				'network_id' => $wpdb->siteid,
 				'fields'     => 'ids',
+				'number'     => 0,
 			]
 		);
 	}
