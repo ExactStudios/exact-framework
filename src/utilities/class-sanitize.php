@@ -114,7 +114,7 @@ class Sanitize {
 	 * @return string
 	 */
 	public static function sanitize_textarea( $value ) {
-		return implode( "\n", array_map( 'clean', explode( "\n", $value ?? '' ) ) );
+		return implode( "\n", array_map( [ self::class, 'clean' ], explode( "\n", $value ?? '' ) ) );
 	}
 
 	/**

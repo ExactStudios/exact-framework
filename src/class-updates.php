@@ -110,7 +110,7 @@ abstract class Updates {
 	 * @return void
 	 */
 	public function do_updates(): void {
-		if ( ! current_user_can( 'update_plugins' ) ) {
+		if ( ! $this->can_run_updates() ) {
 			return;
 		}
 
@@ -135,22 +135,54 @@ abstract class Updates {
 	 * @return void
 	 */
 	public function perform_updates(): void {
-		$installed_version = $this->get_installed_version();
+		$lock = $this->get_option_name() . '_lock';
 
-		foreach ( $this->get_updates() as $version => $path ) {
-			if ( version_compare( $installed_version, $version, '<' ) ) {
-				$file_path = $this->get_folder() . $path;
-				if ( ! file_exists( $file_path ) ) {
-					error_log( "Update file {$file_path} not found." ); // phpcs:ignore
-					continue;
-				}
-
-				include_once $file_path;
-				$this->save_version( $version );
-			}
+		// ponytail: one option lock per plugin. A killed request holds it until the option is deleted.
+		if ( ! add_option( $lock, time(), '', false ) ) {
+			return;
 		}
 
-		$this->save_version();
+		try {
+			$installed_version = $this->get_installed_version();
+			$updates           = $this->get_updates();
+			uksort( $updates, 'version_compare' );
+
+			foreach ( $updates as $version => $path ) {
+				if ( version_compare( $installed_version, (string) $version, '<' ) ) {
+					$file_path = $this->get_folder() . $path;
+					if ( ! file_exists( $file_path ) ) {
+						error_log( "Update file {$file_path} not found." ); // phpcs:ignore
+						return;
+					}
+
+					include_once $file_path;
+					$this->save_version( (string) $version );
+				}
+			}
+
+			$this->save_version();
+		} finally {
+			delete_option( $lock );
+		}
+	}
+
+	/**
+	 * Whether this request is allowed to migrate.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return bool
+	 */
+	private function can_run_updates(): bool {
+		if ( current_user_can( 'update_plugins' ) ) {
+			return true;
+		}
+
+		if ( wp_doing_cron() ) {
+			return true;
+		}
+
+		return defined( 'WP_CLI' ) && WP_CLI;
 	}
 
 	/**
@@ -167,6 +199,6 @@ abstract class Updates {
 			$version = $this->get_version();
 		}
 
-		update_option( $this->get_option_name(), $this->get_version() );
+		update_option( $this->get_option_name(), $version );
 	}
 }
